@@ -70,6 +70,13 @@ predict_model.xgb.Booster <- function(x, newdata, type, ...) {
     stop('The xgboost package is required for predicting xgboost models')
   }
   if(is.data.frame(newdata)){
+    newdata <- lapply(newdata, function(column){
+      if(is.factor(column)){
+        return(as.integer(column))
+      } else {
+        return(column)
+      }
+    })
     newdata <- xgboost::xgb.DMatrix(as.matrix(newdata))
   }
   p <- data.frame(predict(x, newdata = newdata, reshape = TRUE, ...), stringsAsFactors = FALSE)
